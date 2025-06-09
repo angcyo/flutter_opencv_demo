@@ -21,9 +21,11 @@ https://pub.dev/packages/opencv_dart
 
 https://github.com/rainyl/opencv_dart
 
+## iOS
+
 - 需要`ruby` > `3.0+`
 
-## 更新`ruby`
+### 更新`ruby`
 
 `ruby 3.4.4 (2025-05-14 revision a38531fd3f) +PRISM [arm64-darwin24]`
 
@@ -33,6 +35,7 @@ brew upgrade ruby
 
 source ~/.zshrc && ruby -v
 ```
+https://cocoapods.org/
 
 ```
 sudo gem update cocoapods
@@ -41,4 +44,42 @@ pod --version
 1.16.2
 
 pod install
+```
+
+### 添加 `Other Linker Flags`
+
+`TARGETS`->`Runner`->`Build Settings`->`Linking - General`->`Other Linker Flags`
+
+添加 `-framework` `DartCvIOS`.
+
+```diff
+OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"c++\"",
+					"-framework",
+					"\"AVFoundation\"",
+					"-framework",
+					"\"Accelerate\"",
+					"-framework",
+					"\"AssetsLibrary\"",
+					"-framework",
+					"\"CoreGraphics\"",
+					"-framework",
+					"\"CoreImage\"",
+					"-framework",
+					"\"CoreMedia\"",
+					"-framework",
+					"\"CoreVideo\"",
+				  + "-framework",
+				  + "\"DartCvIOS\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"QuartzCore\"",
+					"-framework",
+					"\"UIKit\"",
+					"-framework",
+					"\"image_picker_ios\"",
+				);
 ```
