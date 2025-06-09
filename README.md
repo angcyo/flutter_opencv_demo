@@ -23,7 +23,7 @@ https://github.com/rainyl/opencv_dart
 
 ## iOS
 
-- 需要`ruby` > `3.0+`
+- 需要`ruby` > `3.0+`. `brew install ruby`
 
 ### 更新`ruby`
 
