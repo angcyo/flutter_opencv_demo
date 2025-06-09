@@ -18,6 +18,7 @@ samples, guidance on mobile development, and a full API reference.
 # opencv_dart
 
 https://pub.dev/packages/opencv_dart
+
 https://github.com/rainyl/opencv_dart
 
 - 需要`ruby` > `3.0+`
