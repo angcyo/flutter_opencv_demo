@@ -31,6 +31,8 @@ source ~/.zshrc && ruby -v
 ```
 
 ```
+sudo gem update cocoapods
+
 pod --version
 1.16.2
 
