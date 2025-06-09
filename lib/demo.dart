@@ -27,6 +27,26 @@ class _DemoWidgetState extends State<DemoWidget> {
     return (gray, blur);
   }
 
+  void test_image() async {
+    /*final picker = ImagePicker();
+    final img = await picker.pickImage(source: ImageSource.gallery);
+    if (img != null) {
+      final path = img.path;
+      final mat = cv.imread(path);
+      print("cv.imread: width: ${mat.cols}, height: ${mat.rows}, path: $path");
+      debugPrint("mat.data.length: ${mat.data.length}");
+      // heavy computation
+      final (gray, blur) = await heavyTaskAsync(mat, count: 1);
+      setState(() {
+        images = [
+          cv.imencode(".png", mat).$2,
+          cv.imencode(".png", gray).$2,
+          cv.imencode(".png", blur).$2,
+        ];
+      });
+    }*/
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(child: Text(cv.getBuildInformation()));
