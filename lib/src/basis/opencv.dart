@@ -47,11 +47,11 @@ Future<cv.Mat> loadAssetImage(String key) async {
 Future<Uint8List> testChessboardCorners() async {
   // final image = await loadAssetImage("lib/assets/chessboard.png"); // 6,9
   // final patternSize = (6, 9);
-  final image = await loadAssetImage("lib/assets/left07.jpg"); //7,6
-  final patternSize = (7,6);
+  // final image = await loadAssetImage("lib/assets/left07.jpg"); //7,6
+  // final patternSize = (7,6);
 
-  // final image = await loadAssetImage("lib/assets/grid.png");
-  // final patternSize = (10, 10);
+  final image = await loadAssetImage("lib/assets/grid.png");
+  final patternSize = (10, 10);
 
   final width = image.width;
   final height = image.height;
@@ -87,6 +87,40 @@ Future<Uint8List> testChessboardCorners() async {
   } else {
     return image.toImageBytes();
   }
+}
+
+/// 测试相机标定
+/*Future<Uint8List> testCalibrateCamera() async {
+  cv.calibrateCamera(objectPoints, imagePoints, imageSize, cameraMatrix, distCoeffs)
+}*/
+
+/// 探测锐角
+Future<Uint8List> testGoodFeaturesToTrack() async {
+  final image = await loadAssetImage("lib/assets/grid.png");
+
+  // 转换为灰度图
+  final gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY);
+
+  //OpenCV(4.11.0) Error: Assertion failed (qualityLevel > 0 && minDistance >= 0 && maxCorners >= 0) in goodFeaturesToTrack
+  final corners = cv.goodFeaturesToTrack(gray, 100, 0.5, 15);
+
+  final width = image.width;
+  final height = image.height;
+  print(
+    "${screenSize} ${screenSizePixel} [$width*$height]corners[${corners.length}]: $corners",
+  );
+
+  final radius = width / screenSizePixel.width;
+  return await drawImage(width, height, (canvas) async {
+    canvas.drawImage(await image.toUiImage(), Offset.zero, Paint());
+    for (final point in corners) {
+      canvas.drawCircle(
+        Offset(point.x, point.y),
+        radius * 10,
+        Paint()..color = Colors.red,
+      );
+    }
+  }).then((image) => image.toBytes());
 }
 
 /// 测试入口

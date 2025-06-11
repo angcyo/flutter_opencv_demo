@@ -45,6 +45,14 @@ class _Calib3dDemoState extends State<Calib3dDemo> with StopwatchMixin {
                   child: Text("获取棋盘角点"),
                 ),
                 FilledButton(
+                  onPressed: () {
+                    wrapStopwatch("探测锐角", () async {
+                      tempImageBytes = await testGoodFeaturesToTrack();
+                    });
+                  },
+                  child: Text("探测锐角"),
+                ),
+                FilledButton(
                   onPressed: () async {
                     //tempImageBytes = await test();
                     tempImageBytes = await testChessboardCorners();
