@@ -123,6 +123,24 @@ Future<Uint8List> testGoodFeaturesToTrack() async {
   }).then((image) => image.toBytes());
 }
 
+/// 测试FAST 角点检测
+Future<Uint8List> testFastFeatureDetector() async {
+  final image = await loadAssetImage("lib/assets/grid.png");
+  final detector = cv.FastFeatureDetector.create();
+  final keyPoints = detector.detect(image);
+
+  final output = cv.Mat.empty();
+  cv.drawKeyPoints(
+    image,
+    keyPoints,
+    output,
+    cv.Scalar.fromRgb(255, 0, 0),
+    cv.DrawMatchesFlag.DRAW_RICH_KEYPOINTS,
+  );
+
+  return output.toImageBytes();
+}
+
 /// 测试入口
 Future<Uint8List> test() async {
   //final image = await loadAssetImage("lib/assets/chessboard.png");
