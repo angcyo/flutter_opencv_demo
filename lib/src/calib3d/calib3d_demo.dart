@@ -1,0 +1,61 @@
+import 'dart:typed_data';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_opencv_demo/src/basis/opencv.dart';
+import 'package:opencv_dart/opencv_dart.dart' as cv;
+
+import '../basis/ui.dart';
+
+///
+/// @author <a href="mailto:angcyo@126.com">angcyo</a>
+/// @date 2025/06/11
+///
+class Calib3dDemo extends StatefulWidget {
+  const Calib3dDemo({super.key});
+
+  @override
+  State<Calib3dDemo> createState() => _Calib3dDemoState();
+}
+
+class _Calib3dDemoState extends State<Calib3dDemo> with StopwatchMixin {
+  Uint8List? tempImageBytes;
+
+  @override
+  Widget build(BuildContext context) {
+    //cv.findChessboardCorners(image, patternSize)
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Calib3dDemo')),
+      body: Column(
+        children: [
+          //const Center(child: Text('Calib3dDemo')),
+          Image.asset("lib/assets/chessboard.png"),
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              FilledButton(
+                onPressed: () {
+                  wrapStopwatch("获取棋盘角点", () async {
+                    tempImageBytes = await testChessboardCorners();
+                  });
+                },
+                child: Text("获取棋盘角点"),
+              ),
+              FilledButton(
+                onPressed: () async {
+                  //tempImageBytes = await test();
+                  tempImageBytes = await testChessboardCorners();
+                  setState(() {});
+                },
+                child: Text("test"),
+              ),
+            ],
+          ),
+          if (tempImageBytes != null) Image.memory(tempImageBytes!),
+          if (stopwatchText != null) Text(stopwatchText!),
+        ],
+      ),
+    );
+  }
+}

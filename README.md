@@ -21,6 +21,20 @@ https://pub.dev/packages/opencv_dart
 
 https://github.com/rainyl/opencv_dart
 
+## Android `minSdk 24`
+
+`tools:overrideLibrary="dev.rainyl.opencv_dart"`
+
+```diff
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  + xmlns:tools="http://schemas.android.com/tools">
+  +
+  +  <!-- 添加 tools:overrideLibrary 属性 -->
+  +  <uses-sdk tools:overrideLibrary="dev.rainyl.opencv_dart" />
+  ...
+</manifest>
+```
+
 ## iOS
 
 - 需要`ruby` > `3.0+`. `brew install ruby`
