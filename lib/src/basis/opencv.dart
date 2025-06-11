@@ -126,7 +126,7 @@ Future<Uint8List> testGoodFeaturesToTrack() async {
 /// 测试FAST 角点检测
 Future<Uint8List> testFastFeatureDetector() async {
   final image = await loadAssetImage("lib/assets/grid.png");
-  final detector = cv.FastFeatureDetector.create();
+  final detector = cv.FastFeatureDetector.create(threshold: 50);
   final keyPoints = detector.detect(image);
 
   final output = cv.Mat.empty();
