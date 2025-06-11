@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_opencv_demo/src/basis/ui.dart';
 import 'package:opencv_dart/opencv_dart.dart' as cv;
 
 import 'basis.dart';
@@ -44,18 +45,25 @@ Future<cv.Mat> loadAssetImage(String key) async {
 
 /// 棋盘角落坐标
 Future<Uint8List> testChessboardCorners() async {
-  final image = await loadAssetImage("lib/assets/left07.jpg");
+  final image = await loadAssetImage("lib/assets/chessboard.png"); // 6,9
+  final patternSize = (6, 9);
+  //final image = await loadAssetImage("lib/assets/left07.jpg"); //7,6
+  //final patternSize = (7,6);
   final width = image.width;
   final height = image.height;
   // Error: One of the arguments' values is out of range (Both width and height of the pattern should have bigger than 2) in findChessboardCorners
-  final (success, corners) = cv.findChessboardCorners(image, (7, 6));
+  final (success, corners) = cv.findChessboardCorners(image, patternSize);
+  print(
+    "${screenSize} ${screenSizePixel} [$width*$height]success: $success corners[${corners.length}]: $corners",
+  );
+  final radius = width / screenSizePixel.width;
   if (success) {
     return await drawImage(width, height, (canvas) async {
       canvas.drawImage(await image.toUiImage(), Offset.zero, Paint());
       for (final point in corners) {
         canvas.drawCircle(
           Offset(point.x, point.y),
-          3,
+          radius * 10,
           Paint()..color = Colors.red,
         );
       }

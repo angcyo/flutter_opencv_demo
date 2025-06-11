@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -38,3 +39,20 @@ mixin StopwatchMixin {
     //print("...end");
   }
 }
+
+//-
+
+/// [RenderView]
+RenderView get renderView =>
+    RendererBinding.instance.renderViews.firstOrNull ??
+    WidgetsBinding.instance.renderView;
+
+MediaQueryData get platformMediaQueryData =>
+    MediaQueryData.fromView(renderView.flutterView);
+
+/// 获取屏幕的大小
+/// dp 单位
+Size get screenSize => WidgetsBinding.instance.renderViews.first.size;
+
+Size get screenSizePixel =>
+    screenSize * platformMediaQueryData.devicePixelRatio;
