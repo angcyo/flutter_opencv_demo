@@ -56,3 +56,11 @@ Size get screenSize => WidgetsBinding.instance.renderViews.first.size;
 
 Size get screenSizePixel =>
     screenSize * platformMediaQueryData.devicePixelRatio;
+
+//--
+
+/// 默认的滚动物理特性/滚动行为
+const kScrollPhysics = AlwaysScrollableScrollPhysics(
+  parent: BouncingScrollPhysics(),
+);
+

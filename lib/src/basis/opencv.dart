@@ -45,20 +45,31 @@ Future<cv.Mat> loadAssetImage(String key) async {
 
 /// 棋盘角落坐标
 Future<Uint8List> testChessboardCorners() async {
-  final image = await loadAssetImage("lib/assets/chessboard.png"); // 6,9
-  final patternSize = (6, 9);
-  //final image = await loadAssetImage("lib/assets/left07.jpg"); //7,6
-  //final patternSize = (7,6);
+  // final image = await loadAssetImage("lib/assets/chessboard.png"); // 6,9
+  // final patternSize = (6, 9);
+  final image = await loadAssetImage("lib/assets/left07.jpg"); //7,6
+  final patternSize = (7,6);
+
+  // final image = await loadAssetImage("lib/assets/grid.png");
+  // final patternSize = (10, 10);
+
   final width = image.width;
   final height = image.height;
   // Error: One of the arguments' values is out of range (Both width and height of the pattern should have bigger than 2) in findChessboardCorners
   final (success, corners) = cv.findChessboardCorners(image, patternSize);
+
+  //cv.cornerSubPix(image, corners, (7, 7), (width, height));
+
   print(
     "${screenSize} ${screenSizePixel} [$width*$height]success: $success corners[${corners.length}]: $corners",
   );
   final radius = width / screenSizePixel.width;
   if (success) {
-    return await drawImage(width, height, (canvas) async {
+    return cv
+        .drawChessboardCorners(image, patternSize, corners, true)
+        .toImageBytes();
+
+    /*return await drawImage(width, height, (canvas) async {
       canvas.drawImage(await image.toUiImage(), Offset.zero, Paint());
       for (final point in corners) {
         canvas.drawCircle(
@@ -67,12 +78,12 @@ Future<Uint8List> testChessboardCorners() async {
           Paint()..color = Colors.red,
         );
       }
-      /*canvas.drawLine(
+      */ /*canvas.drawLine(
         Offset(10, 10),
         Offset(100, 100),
         Paint()..color = Colors.red,
-      );*/
-    }).then((image) => image.toBytes());
+      );*/ /*
+    }).then((image) => image.toBytes());*/
   } else {
     return image.toImageBytes();
   }

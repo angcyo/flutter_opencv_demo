@@ -26,35 +26,38 @@ class _Calib3dDemoState extends State<Calib3dDemo> with StopwatchMixin {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Calib3dDemo')),
-      body: Column(
-        children: [
-          //const Center(child: Text('Calib3dDemo')),
-          Image.asset("lib/assets/chessboard.png"),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: [
-              FilledButton(
-                onPressed: () {
-                  wrapStopwatch("获取棋盘角点", () async {
+      body: SingleChildScrollView(
+        physics: kScrollPhysics,
+        child: Column(
+          children: [
+            //const Center(child: Text('Calib3dDemo')),
+            Image.asset("lib/assets/chessboard.png"),
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: [
+                FilledButton(
+                  onPressed: () {
+                    wrapStopwatch("获取棋盘角点", () async {
+                      tempImageBytes = await testChessboardCorners();
+                    });
+                  },
+                  child: Text("获取棋盘角点"),
+                ),
+                FilledButton(
+                  onPressed: () async {
+                    //tempImageBytes = await test();
                     tempImageBytes = await testChessboardCorners();
-                  });
-                },
-                child: Text("获取棋盘角点"),
-              ),
-              FilledButton(
-                onPressed: () async {
-                  //tempImageBytes = await test();
-                  tempImageBytes = await testChessboardCorners();
-                  setState(() {});
-                },
-                child: Text("test"),
-              ),
-            ],
-          ),
-          if (tempImageBytes != null) Image.memory(tempImageBytes!),
-          if (stopwatchText != null) Text(stopwatchText!),
-        ],
+                    setState(() {});
+                  },
+                  child: Text("test"),
+                ),
+              ],
+            ),
+            if (tempImageBytes != null) Image.memory(tempImageBytes!),
+            if (stopwatchText != null) Text(stopwatchText!),
+          ],
+        ),
       ),
     );
   }
