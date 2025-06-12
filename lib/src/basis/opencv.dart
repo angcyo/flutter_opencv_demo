@@ -197,6 +197,7 @@ Future<List<Uint8List>> testCalibrateCamera() async {
 
   //cameraMatrix:Mat(addr=0x-4bffff833fce5f70, type=CV_64FC1, rows=3, cols=3, channels=1) distCoeffs:Mat(addr=0x-4bffff833fce5f10, type=CV_64FC1, rows=1, cols=5, channels=1)
   print("cameraMatrix:$cameraMatrix distCoeffs:$distCoeffs");
+  print("rvecs:$rvecs tvecs:$tvecs");
 
   //外部参数
   //cameraMatrix row:0 [2581.090997341589, 0.0, 171.50912847939773]
@@ -210,6 +211,16 @@ Future<List<Uint8List>> testCalibrateCamera() async {
   //distCoeffs row:0 [-46.0553240737217, 1280.838621620429, 0.335834781625168, 0.9000246408904069, -11745.693298991113]
   distCoeffs.forEachRow((row, values) {
     print("distCoeffs row:$row $values");
+  });
+
+  //旋转向量
+  rvecs.forEachRow((row, values) {
+    print("rvecs row:$row $values");
+  });
+
+  //平移向量
+  tvecs.forEachRow((row, values) {
+    print("tvecs row:$row $values");
   });
 
   //debugger();
@@ -310,6 +321,8 @@ Future<Uint8List> testFastFeatureDetector() async {
     cv.Scalar.fromRgb(255, 0, 0),
     cv.DrawMatchesFlag.DRAW_RICH_KEYPOINTS,
   );
+
+  print("keyPoints:$keyPoints");
 
   return output.toImageBytes();
 }
