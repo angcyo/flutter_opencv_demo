@@ -213,6 +213,9 @@ Future<List<Uint8List>> testCalibrateCamera() async {
     print("distCoeffs row:$row $values");
   });
 
+  //罗德里格斯
+  //https://docs.opencv.org/4.11.0/d9/d0c/group__calib3d.html#ga61585db663d9da06b68e70cfbf6a1eac
+
   //旋转向量
   rvecs.forEachRow((row, values) {
     print("rvecs row:$row $values");
