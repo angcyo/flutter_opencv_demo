@@ -19,6 +19,7 @@ class Calib3dDemo extends StatefulWidget {
 
 class _Calib3dDemoState extends State<Calib3dDemo> with StopwatchMixin {
   Uint8List? tempImageBytes;
+  List<Uint8List>? tempImageBytesList;
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +47,14 @@ class _Calib3dDemoState extends State<Calib3dDemo> with StopwatchMixin {
                 ),
                 FilledButton(
                   onPressed: () {
+                    wrapStopwatch("相机标定", () async {
+                      tempImageBytesList = await testCalibrateCamera();
+                    });
+                  },
+                  child: Text("相机标定"),
+                ),
+                FilledButton(
+                  onPressed: () {
                     wrapStopwatch("探测锐角", () async {
                       tempImageBytes = await testGoodFeaturesToTrack();
                     });
@@ -69,6 +78,14 @@ class _Calib3dDemoState extends State<Calib3dDemo> with StopwatchMixin {
                   child: Text("人脸检测"),
                 ),
                 FilledButton(
+                  onPressed: () {
+                    tempImageBytes = null;
+                    tempImageBytesList = null;
+                    setState(() {});
+                  },
+                  child: Text("clear"),
+                ),
+                FilledButton(
                   onPressed: () async {
                     //tempImageBytes = await test();
                     tempImageBytes = await testChessboardCorners();
@@ -79,6 +96,16 @@ class _Calib3dDemoState extends State<Calib3dDemo> with StopwatchMixin {
               ],
             ),
             if (tempImageBytes != null) Image.memory(tempImageBytes!),
+            if (tempImageBytesList != null)
+              Wrap(
+                children: [
+                  for (var item in tempImageBytesList!)
+                    SizedBox(
+                      width: screenSize.width/2,
+                      child: Image.memory(item),
+                    ),
+                ],
+              ),
             if (stopwatchText != null) Text(stopwatchText!),
             SafeArea(top: false, child: SizedBox(height: 0)),
           ],

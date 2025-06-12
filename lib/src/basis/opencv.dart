@@ -45,11 +45,21 @@ Future<cv.Mat> loadAssetImage(String key) async {
 //--
 
 /// 棋盘角落坐标
+///
+/// https://docs.opencv.org/4.11.0/d9/d0c/group__calib3d.html#ga93efa9b0aa890de240ca32b11253dd4a
 Future<Uint8List> testChessboardCorners() async {
   // final image = await loadAssetImage("lib/assets/chessboard.png"); // 6,9
   // final patternSize = (6, 9);
-  final image = await loadAssetImage("lib/assets/left07.jpg"); //7,6
-  final patternSize = (7,6);
+  //final image = await loadAssetImage("lib/assets/left07.jpg"); //7,6
+  //final patternSize = (7, 6);
+  //final image = await loadAssetImage("lib/assets/left04.jpg"); //9,6
+  //final patternSize = (9, 6);
+  //final image = await loadAssetImage("lib/assets/left05.jpg"); //9,6
+  //final patternSize = (9, 6);
+  //final image = await loadAssetImage("lib/assets/left09.jpg"); //9,6
+  //final patternSize = (9, 6);
+  final image = await loadAssetImage("lib/assets/left11.jpg"); //9,6
+  final patternSize = (9, 6);
 
   //final image = await loadAssetImage("lib/assets/grid.png");
   //final patternSize = (10, 10);
@@ -91,9 +101,170 @@ Future<Uint8List> testChessboardCorners() async {
 }
 
 /// 测试相机标定
-/*Future<Uint8List> testCalibrateCamera() async {
-  cv.calibrateCamera(objectPoints, imagePoints, imageSize, cameraMatrix, distCoeffs)
-}*/
+/// https://docs.opencv.org/4.11.0/d9/d0c/group__calib3d.html
+/// https://docs.opencv.org/4.11.0/d9/d0c/group__calib3d.html#ga687a1ab946686f0d85ae0363b5af1d7b
+/// https://docs.opencv.org/4.11.0/dc/dbb/tutorial_py_calibration.html
+Future<List<Uint8List>> testCalibrateCamera() async {
+  final imageKeys = [
+    "left01.jpg",
+    "left02.jpg",
+    "left03.jpg",
+    //"left04.jpg", //9,6
+    //"left05.jpg", //9,6
+    "left06.jpg",
+    "left07.jpg",
+    "left08.jpg",
+    //"left09.jpg", //9,6
+    //"left11.jpg", //9,6
+    "left12.jpg",
+    "left13.jpg",
+    "left14.jpg",
+  ];
+  final patternSize = (7, 6);
+  final imageSize = (640, 480);
+
+  final resultImages = <Uint8List>[];
+
+  //objpoints = [] # 3d point in real world space
+  //imgpoints = [] # 2d points in image plane.
+
+  List<List<cv.Point3f>> objectPoints = [];
+  List<List<cv.Point2f>> imagePoints = [];
+
+  for (final imageKey in imageKeys) {
+    //原图
+    final image = await loadAssetImage("lib/assets/$imageKey");
+    //灰度化
+    final gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY);
+
+    final width = image.width;
+    final height = image.height;
+    // Error: One of the arguments' values is out of range (Both width and height of the pattern should have bigger than 2) in findChessboardCorners
+    final (success, corners) = cv.findChessboardCorners(gray, patternSize);
+
+    //cv.cornerSubPix(image, corners, (7, 7), (width, height));
+
+    print(
+      "$screenSize $screenSizePixel [$width*$height]success: $success corners[${corners.length}]: $corners",
+    );
+
+    if (success) {
+      final corners2 = cv.cornerSubPix(gray, corners, patternSize, (0, 0));
+
+      List<cv.Point3f> objectPoints2 = [];
+
+      for (var r = 0; r < patternSize.$2; r++) {
+        for (var c = 0; c < patternSize.$1; c++) {
+          objectPoints2.add(cv.Point3f(r * 10, c * 10, 0));
+        }
+      }
+      objectPoints.add(objectPoints2);
+      imagePoints.add(corners2.toList());
+
+      //--
+      var index = 0;
+      for (var item in corners2) {
+        cv.putText(
+          image,
+          "$index",
+          cv.Point(item.x.toInt(), item.y.toInt()),
+          0,
+          0.5,
+          cv.Scalar.fromRgb(255, 0, 0),
+        );
+        index++;
+      }
+      final bytes = cv
+          .drawChessboardCorners(image, patternSize, corners2, success)
+          .toImageBytes();
+
+      print("corners2[${corners2.length}]: $corners2");
+
+      resultImages.add(bytes);
+    }
+  }
+
+  print("objectPoints:$objectPoints");
+
+  //Calibration 校准
+  final (rmsErr, cameraMatrix, distCoeffs, rvecs, tvecs) = cv.calibrateCamera(
+    cv.Contours3f.fromList(objectPoints),
+    cv.Contours2f.fromList(imagePoints),
+    imageSize,
+    cv.Mat.empty(),
+    cv.Mat.empty(),
+  );
+
+  print("cameraMatrix:$cameraMatrix distCoeffs:$distCoeffs");
+
+  //外部参数
+  //cameraMatrix row:0 [2581.090997341589, 0.0, 171.50912847939773]
+  //cameraMatrix row:1 [0.0, 19901.884251272128, 1198.9473867455404]
+  //cameraMatrix row:2 [0.0, 0.0, 1.0]
+  cameraMatrix.forEachRow((row, values) {
+    print("cameraMatrix row:$row $values");
+  });
+
+  //失真系数
+  //distCoeffs row:0 [-46.0553240737217, 1280.838621620429, 0.335834781625168, 0.9000246408904069, -11745.693298991113]
+  distCoeffs.forEachRow((row, values) {
+    print("distCoeffs row:$row $values");
+  });
+
+  //debugger();
+  /*final (rval, validPixROI) = cv.getOptimalNewCameraMatrix(
+    cameraMatrix,
+    distCoeffs,
+    imageSize,
+    1,
+    newImgSize: imageSize,
+  );
+  //rval row:0 [765.2722238923136, 0.0, 429.19259733028036]
+  //rval row:1 [0.0, 989.7426417336067, 514.8037771434226]
+  //rval row:2 [0.0, 0.0, 1.0]
+  rval.forEachRow((row, values) {
+    print("rval row:$row $values");
+  });
+  //validPixROI:Rect(0, 0, 0, 0)
+  print("validPixROI:$validPixROI");*/
+
+  //undistort 去畸变
+  final image = await loadAssetImage("lib/assets/left12.jpg");
+  final dst = cv.undistort(
+    image,
+    cameraMatrix,
+    distCoeffs /*newCameraMatrix: rval*/,
+  );
+
+  //
+  resultImages.add(image.toImageBytes());
+  resultImages.add(dst.toImageBytes());
+
+  //Re-projection Error  重投影误差
+  /*var meanError = 0;
+  for (var i = 0; i < objectPoints.length; i++) {
+    final imgpoints2 = cv.projectPoints(
+      cv.VecPoint3f.fromList(objectPoints[i]),
+      rvecs[i],
+      tvecs[i],
+      cameraMatrix,
+      distCoeffs,
+    );
+    final error = cv.norm(
+      imagePoints[i],
+      imgpoints2,
+      cv.NORM_L2,
+    );
+    meanError += error / objectPoints[i].length;
+  }
+  */ /*for i in range(len(objpoints)):
+  imgpoints2, _ = cv.projectPoints(objpoints[i], rvecs[i], tvecs[i], mtx, dist)
+  error = cv.norm(imgpoints[i], imgpoints2, cv.NORM_L2)/len(imgpoints2)
+  mean_error += error*/ /*
+  print("total error: {}".format(mean_error / len(objpoints)))*/
+
+  return resultImages;
+}
 
 /// 探测锐角
 Future<Uint8List> testGoodFeaturesToTrack() async {
