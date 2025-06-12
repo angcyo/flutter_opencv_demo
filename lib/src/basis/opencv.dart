@@ -195,6 +195,7 @@ Future<List<Uint8List>> testCalibrateCamera() async {
     cv.Mat.empty(),
   );
 
+  //cameraMatrix:Mat(addr=0x-4bffff833fce5f70, type=CV_64FC1, rows=3, cols=3, channels=1) distCoeffs:Mat(addr=0x-4bffff833fce5f10, type=CV_64FC1, rows=1, cols=5, channels=1)
   print("cameraMatrix:$cameraMatrix distCoeffs:$distCoeffs");
 
   //外部参数
@@ -368,6 +369,113 @@ Future<Uint8List> testCascadeClassifier() async {
       );
     }
   }).then((image) => image.toBytes());
+}
+
+/// 测试视角 透视变换
+///
+/// findHomography
+/// https://docs.opencv.org/4.11.0/d9/d0c/group__calib3d.html#ga4abc2ece9fab9398f2e560d53c8c9780
+///
+/// warpAffine
+/// https://docs.opencv.org/4.11.0/da/d54/group__imgproc__transform.html#ga0203d9ee5fcd28d40dbc4a1ea4451983
+Future<List<Uint8List>> testHomographyPerspective() async {
+  //final M = cv.getPerspectiveTransform(srcPoints, dstPoints);
+  final dsize = (370, 430);
+  final srcPoints = cv.Mat.fromList(4, 2, cv.MatType.CV_32FC1, [
+    189.0,
+    50.0,
+    459.0,
+    33.0,
+    520.0,
+    447.0,
+    148.0,
+    454.0,
+  ]);
+  final dstPoints = cv.Mat.fromList(4, 2, cv.MatType.CV_32FC1, [
+    0.0,
+    0.0,
+    dsize.$1.toDouble(),
+    0.0,
+    dsize.$1.toDouble(),
+    dsize.$2.toDouble(),
+    0.0,
+    dsize.$2.toDouble(),
+  ]);
+
+  /*final srcPoints = cv.Mat.from2DList([
+    [192.0, 65.0],
+    [458.0, 51.0],
+    [508.0, 438.0],
+    [154.0, 438.0],
+  ], cv.MatType.CV_32FC1);
+  final dstPoints = cv.Mat.from2DList([
+    [0.0, 0.0],
+    [dsize.$1.toDouble(), 0.0],
+    [dsize.$1.toDouble(), dsize.$2.toDouble()],
+    [0.0, dsize.$2.toDouble()],
+  ], cv.MatType.CV_32FC1);*/
+  final matrix = cv.findHomography(srcPoints, dstPoints);
+
+  print("matrix:$matrix");
+
+  final imageResults = <Uint8List>[];
+  final image = await loadAssetImage("lib/assets/left12.jpg");
+  imageResults.add(image.toImageBytes());
+
+  final width = dsize.$1;
+  final height = dsize.$2;
+
+  final dst = cv.warpPerspective(image, matrix, dsize);
+  imageResults.add(
+    await drawImage(width, height, (canvas) async {
+      //canvas.drawImage(await image.toUiImage(), Offset.zero, Paint());
+      canvas.drawImage(await dst.toUiImage(), Offset.zero, Paint());
+    }).then((image) {
+      print("image[${image.width}*${image.height}]");
+      return image.toBytes();
+    }),
+  );
+  return imageResults;
+}
+
+/// 透视变换
+Future<List<Uint8List>> testPerspectiveTransform() async {
+  final dsize = (370, 430);
+  final matrix = cv.getPerspectiveTransform2f(
+    cv.VecPoint2f.fromList([
+      cv.Point2f(189.0, 50.0),
+      cv.Point2f(459.0, 33.0),
+      cv.Point2f(520.0, 447.0),
+      cv.Point2f(148.0, 454.0),
+    ]),
+    cv.VecPoint2f.fromList([
+      cv.Point2f(0.0, 0.0),
+      cv.Point2f(dsize.$1.toDouble(), 0.0),
+      cv.Point2f(dsize.$1.toDouble(), dsize.$2.toDouble()),
+      cv.Point2f(0.0, dsize.$2.toDouble()),
+    ]),
+  );
+
+  print("matrix:$matrix");
+
+  final imageResults = <Uint8List>[];
+  final image = await loadAssetImage("lib/assets/left12.jpg");
+  imageResults.add(image.toImageBytes());
+
+  final width = dsize.$1;
+  final height = dsize.$2;
+
+  final dst = cv.warpPerspective(image, matrix, dsize);
+  imageResults.add(
+    await drawImage(width, height, (canvas) async {
+      //canvas.drawImage(await image.toUiImage(), Offset.zero, Paint());
+      canvas.drawImage(await dst.toUiImage(), Offset.zero, Paint());
+    }).then((image) {
+      print("image[${image.width}*${image.height}]");
+      return image.toBytes();
+    }),
+  );
+  return imageResults;
 }
 
 /// 测试入口

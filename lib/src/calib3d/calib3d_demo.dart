@@ -47,14 +47,6 @@ class _Calib3dDemoState extends State<Calib3dDemo> with StopwatchMixin {
                 ),
                 FilledButton(
                   onPressed: () {
-                    wrapStopwatch("相机标定", () async {
-                      tempImageBytesList = await testCalibrateCamera();
-                    });
-                  },
-                  child: Text("相机标定"),
-                ),
-                FilledButton(
-                  onPressed: () {
                     wrapStopwatch("探测锐角", () async {
                       tempImageBytes = await testGoodFeaturesToTrack();
                     });
@@ -79,6 +71,30 @@ class _Calib3dDemoState extends State<Calib3dDemo> with StopwatchMixin {
                 ),
                 FilledButton(
                   onPressed: () {
+                    wrapStopwatch("相机标定", () async {
+                      tempImageBytesList = await testCalibrateCamera();
+                    });
+                  },
+                  child: Text("相机标定"),
+                ),
+                FilledButton(
+                  onPressed: () {
+                    wrapStopwatch("测试透视变换(perspective)", () async {
+                      tempImageBytesList = await testPerspectiveTransform();
+                    });
+                  },
+                  child: Text("测试透视变换(perspective)"),
+                ),
+                FilledButton(
+                  onPressed: () {
+                    wrapStopwatch("测试Homography透视(perspective)", () async {
+                      tempImageBytesList = await testHomographyPerspective();
+                    });
+                  },
+                  child: Text("测试Homography透视(perspective)"),
+                ),
+                FilledButton(
+                  onPressed: () {
                     tempImageBytes = null;
                     tempImageBytesList = null;
                     setState(() {});
@@ -95,14 +111,15 @@ class _Calib3dDemoState extends State<Calib3dDemo> with StopwatchMixin {
                 ),
               ],
             ),
-            if (tempImageBytes != null) Image.memory(tempImageBytes!),
+            if (tempImageBytes != null)
+              Image.memory(tempImageBytes!, fit: BoxFit.fill),
             if (tempImageBytesList != null)
               Wrap(
                 children: [
                   for (var item in tempImageBytesList!)
                     SizedBox(
-                      width: screenSize.width/2,
-                      child: Image.memory(item),
+                      width: screenSize.width / 2,
+                      child: Image.memory(item, fit: BoxFit.fill),
                     ),
                 ],
               ),
