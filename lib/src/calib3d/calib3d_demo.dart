@@ -62,11 +62,11 @@ class _Calib3dDemoState extends State<Calib3dDemo> with StopwatchMixin {
                 ),
                 FilledButton(
                   onPressed: () {
-                    wrapStopwatch("人脸识别", () async {
+                    wrapStopwatch("人脸检测", () async {
                       tempImageBytes = await testCascadeClassifier();
                     });
                   },
-                  child: Text("人脸识别"),
+                  child: Text("人脸检测"),
                 ),
                 FilledButton(
                   onPressed: () async {

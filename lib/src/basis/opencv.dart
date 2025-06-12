@@ -62,7 +62,7 @@ Future<Uint8List> testChessboardCorners() async {
   //cv.cornerSubPix(image, corners, (7, 7), (width, height));
 
   print(
-    "${screenSize} ${screenSizePixel} [$width*$height]success: $success corners[${corners.length}]: $corners",
+    "$screenSize $screenSizePixel [$width*$height]success: $success corners[${corners.length}]: $corners",
   );
   final radius = width / screenSizePixel.width;
   if (success) {
@@ -108,7 +108,7 @@ Future<Uint8List> testGoodFeaturesToTrack() async {
   final width = image.width;
   final height = image.height;
   print(
-    "${screenSize} ${screenSizePixel} [$width*$height]corners[${corners.length}]: $corners",
+    "$screenSize $screenSizePixel [$width*$height]corners[${corners.length}]: $corners",
   );
 
   final radius = width / screenSizePixel.width;
@@ -160,10 +160,13 @@ Future<Uint8List> testCascadeClassifier() async {
 
   final width = image.width;
   final height = image.height;
-  print("${screenSize} ${screenSizePixel} [$width*$height]");
 
   final faces = faceCascade.detectMultiScale(image);
   final eyes = eyeCascade.detectMultiScale(image);
+
+  print(
+    "$screenSize $screenSizePixel [$width*$height] faces: $faces eyes: $eyes",
+  );
 
   return await drawImage(width, height, (canvas) async {
     canvas.drawImage(await image.toUiImage(), Offset.zero, Paint());
