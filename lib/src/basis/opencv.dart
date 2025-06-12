@@ -48,11 +48,11 @@ Future<cv.Mat> loadAssetImage(String key) async {
 Future<Uint8List> testChessboardCorners() async {
   // final image = await loadAssetImage("lib/assets/chessboard.png"); // 6,9
   // final patternSize = (6, 9);
-  // final image = await loadAssetImage("lib/assets/left07.jpg"); //7,6
-  // final patternSize = (7,6);
+  final image = await loadAssetImage("lib/assets/left07.jpg"); //7,6
+  final patternSize = (7,6);
 
-  final image = await loadAssetImage("lib/assets/grid.png");
-  final patternSize = (10, 10);
+  //final image = await loadAssetImage("lib/assets/grid.png");
+  //final patternSize = (10, 10);
 
   final width = image.width;
   final height = image.height;
