@@ -31,7 +31,7 @@ class _Calib3dDemoState extends State<Calib3dDemo> with StopwatchMixin {
         child: Column(
           children: [
             //const Center(child: Text('Calib3dDemo')),
-            Image.asset("lib/assets/chessboard.png"),
+            //Image.asset("lib/assets/chessboard.png"),
             Wrap(
               spacing: 2,
               runSpacing: 2,
