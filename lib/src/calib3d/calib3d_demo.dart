@@ -61,6 +61,14 @@ class _Calib3dDemoState extends State<Calib3dDemo> with StopwatchMixin {
                   child: Text("测试FAST角点检测"),
                 ),
                 FilledButton(
+                  onPressed: () {
+                    wrapStopwatch("人脸识别", () async {
+                      tempImageBytes = await testCascadeClassifier();
+                    });
+                  },
+                  child: Text("人脸识别"),
+                ),
+                FilledButton(
                   onPressed: () async {
                     //tempImageBytes = await test();
                     tempImageBytes = await testChessboardCorners();
@@ -72,6 +80,7 @@ class _Calib3dDemoState extends State<Calib3dDemo> with StopwatchMixin {
             ),
             if (tempImageBytes != null) Image.memory(tempImageBytes!),
             if (stopwatchText != null) Text(stopwatchText!),
+            SafeArea(top: false, child: SizedBox(height: 0)),
           ],
         ),
       ),

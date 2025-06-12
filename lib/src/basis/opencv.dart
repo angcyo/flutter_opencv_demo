@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_opencv_demo/src/basis/pubs.dart';
 import 'package:flutter_opencv_demo/src/basis/ui.dart';
 import 'package:opencv_dart/opencv_dart.dart' as cv;
 
@@ -139,6 +140,60 @@ Future<Uint8List> testFastFeatureDetector() async {
   );
 
   return output.toImageBytes();
+}
+
+/// 分类器识别, 人脸位置探测
+Future<Uint8List> testCascadeClassifier() async {
+  // 分类器
+  final faceFile = await saveAssetFileToCache(
+    "lib/assets/haarcascades/haarcascade_frontalface_default.xml",
+  );
+  final eyeFile = await saveAssetFileToCache(
+    "lib/assets/haarcascades/haarcascade_eye.xml",
+  );
+  final faceCascade = cv.CascadeClassifier.fromFile(faceFile.path);
+  final eyeCascade = cv.CascadeClassifier.fromFile(eyeFile.path);
+
+  //人头像图
+  var image = await loadAssetImage("lib/assets/lena.jpg");
+  image = cv.cvtColor(image, cv.COLOR_BGR2GRAY);
+
+  final width = image.width;
+  final height = image.height;
+  print("${screenSize} ${screenSizePixel} [$width*$height]");
+
+  final faces = faceCascade.detectMultiScale(image);
+  final eyes = eyeCascade.detectMultiScale(image);
+
+  return await drawImage(width, height, (canvas) async {
+    canvas.drawImage(await image.toUiImage(), Offset.zero, Paint());
+    for (final face in faces) {
+      canvas.drawRect(
+        Rect.fromLTWH(
+          face.x.toDouble(),
+          face.y.toDouble(),
+          face.width.toDouble(),
+          face.height.toDouble(),
+        ),
+        Paint()
+          ..color = Colors.red
+          ..style = PaintingStyle.stroke,
+      );
+    }
+    for (final eye in eyes) {
+      canvas.drawRect(
+        Rect.fromLTWH(
+          eye.x.toDouble(),
+          eye.y.toDouble(),
+          eye.width.toDouble(),
+          eye.height.toDouble(),
+        ),
+        Paint()
+          ..color = Colors.blue
+          ..style = PaintingStyle.stroke,
+      );
+    }
+  }).then((image) => image.toBytes());
 }
 
 /// 测试入口
