@@ -1,5 +1,10 @@
 # flutter_opencv_demo
 
+- OpenCV – 4.12.0 `2025-07-09`
+- OpenCV – 4.11.0 `2025-02-18`
+- OpenCV – 4.10.0 `2024-06-03`
+- OpenCV – 4.9.0  `2023-12-28`
+
 - [OpenCV Releases](https://opencv.org/releases/)
 - [chessboard.png](https://github.com/opencv/opencv/blob/4.12.0/samples/data/chessboard.png)
 
