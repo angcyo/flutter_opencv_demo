@@ -27,10 +27,10 @@ https://github.com/rainyl/opencv_dart
 
 ```diff
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  + xmlns:tools="http://schemas.android.com/tools">
-  +
-  +  <!-- 添加 tools:overrideLibrary 属性 -->
-  +  <uses-sdk tools:overrideLibrary="dev.rainyl.opencv_dart" />
++   xmlns:tools="http://schemas.android.com/tools">
++  
++    <!-- 添加 tools:overrideLibrary 属性 -->
++    <uses-sdk tools:overrideLibrary="dev.rainyl.opencv_dart" />
   ...
 </manifest>
 ```
@@ -85,8 +85,8 @@ OTHER_LDFLAGS = (
 					"\"CoreMedia\"",
 					"-framework",
 					"\"CoreVideo\"",
-				  + "-framework",
-				  + "\"DartCvIOS\"",
++				    "-framework",
++				    "\"DartCvIOS\"",
 					"-framework",
 					"\"Foundation\"",
 					"-framework",
